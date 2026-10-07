@@ -1,0 +1,89 @@
+.app-footer {
+  width: 100%;
+  background: rgba(11, 17, 30, 0.9);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 3rem 1.5rem 2rem;
+  margin-top: auto;
+
+  .footer-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #f8fafc;
+
+      .text-emerald {
+        color: #10b981;
+      }
+    }
+
+    .footer-desc {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      max-width: 600px;
+      line-height: 1.6;
+    }
+  }
+
+  .footer-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #64748b;
+
+      svg {
+        color: #f59e0b;
+      }
+    }
+  }
+
+  .footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.8rem;
+    color: #64748b;
+
+    .footer-links {
+      display: flex;
+      gap: 1.25rem;
+
+      a {
+        color: #94a3b8;
+        text-decoration: none;
+        transition: color 0.2s ease;
+
+        &:hover {
+          color: #10b981;
+        }
+      }
+    }
+  }
+}

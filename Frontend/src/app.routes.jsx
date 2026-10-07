@@ -1,10 +1,12 @@
 import { createBrowserRouter } from "react-router";
 import Login from "./features/auth/pages/Login";
 import Register from "./features/auth/pages/Register";
+import VerifyEmail from "./features/auth/pages/VerifyEmail";
+import ForgotPassword from "./features/auth/pages/ForgotPassword";
+import ResetPassword from "./features/auth/pages/ResetPassword";
 import Protected from "./features/auth/components/Protected";
 import Home from "./features/interview/pages/Home";
 import Interview from "./features/interview/pages/Interview";
-
 
 export const router = createBrowserRouter([
     {
@@ -16,11 +18,27 @@ export const router = createBrowserRouter([
         element: <Register />
     },
     {
+        path: "/verify-email",
+        element: <VerifyEmail />
+    },
+    {
+        path: "/forgot-password",
+        element: <ForgotPassword />
+    },
+    {
+        path: "/reset-password",
+        element: <ResetPassword />
+    },
+    {
+        path: "/reset-password/:token",
+        element: <ResetPassword />
+    },
+    {
         path: "/",
         element: <Protected><Home /></Protected>
     },
     {
-        path:"/interview/:interviewId",
+        path: "/interview/:interviewId",
         element: <Protected><Interview /></Protected>
     }
 ])

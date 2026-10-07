@@ -12,7 +12,18 @@ const interviewRouter = express.Router()
  * @description generate new interview report on the basis of user self description,resume pdf and job description.
  * @access private
  */
-interviewRouter.post("/", authMiddleware.authUser, upload.single("resume"), interviewController.generateInterViewReportController)
+interviewRouter.post("/", authMiddleware.authUser, (req, res, next) => {
+    upload.single("resume")(req, res, (error) => {
+        if (error && error.code === "INVALID_RESUME_FILE") {
+            return res.status(400).json({ success: false, message: error.message })
+        }
+        if (error && error.code === "LIMIT_FILE_SIZE") {
+            return res.status(400).json({ success: false, message: "Resume PDF must be 3 MB or smaller." })
+        }
+        if (error) return next(error)
+        next()
+    })
+}, interviewController.generateInterViewReportController)
 
 /**
  * @route GET /api/interview/report/:interviewId
@@ -28,6 +39,9 @@ interviewRouter.get("/report/:interviewId", authMiddleware.authUser, interviewCo
  * @access private
  */
 interviewRouter.get("/", authMiddleware.authUser, interviewController.getAllInterviewReportsController)
+
+interviewRouter.post("/report/:interviewId/follow-up-questions", authMiddleware.authUser, interviewController.generateFollowUpQuestionsController)
+interviewRouter.post("/report/:interviewId/follow-up-answers", authMiddleware.authUser, interviewController.saveFollowUpAnswersController)
 
 
 /**
