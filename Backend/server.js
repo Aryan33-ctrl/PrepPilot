@@ -9,7 +9,7 @@ async function startServer() {
     console.log("✓ Environment loaded")
 
     if (process.env.GOOGLE_GENAI_API_KEY) {
-        console.log("✓ Gemini configuration loaded")
+        console.log("✓ Gemini configuration LOADING")
     } else {
         console.error("✗ Gemini configuration missing: GOOGLE_GENAI_API_KEY")
     }
