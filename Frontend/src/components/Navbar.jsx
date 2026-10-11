@@ -1,11 +1,13 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router'
 import { useAuth } from '../features/auth/hooks/useAuth'
-import { Sparkles, LogOut, User, Compass, ShieldCheck } from 'lucide-react'
+import { useTheme } from '../theme/useTheme'
+import { Sparkles, LogOut, User, Moon, ShieldCheck, Sun } from 'lucide-react'
 import './Navbar.scss'
 
 const Navbar = () => {
   const { user, handleLogout } = useAuth()
+  const { theme, toggleTheme } = useTheme()
   const navigate = useNavigate()
 
   const onLogout = async () => {
@@ -38,6 +40,15 @@ const Navbar = () => {
 
         {/* User Actions */}
         <div className="navbar-actions">
+          <button
+            className="theme-toggle"
+            onClick={toggleTheme}
+            title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+          >
+            {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+            <span>{theme === 'dark' ? 'Light' : 'Dark'}</span>
+          </button>
           {user ? (
             <div className="user-menu">
               <div className="user-avatar">
