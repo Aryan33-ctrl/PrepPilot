@@ -6,7 +6,7 @@ import Navbar from '../../../components/Navbar.jsx'
 import Footer from '../../../components/Footer.jsx'
 import {
     Sparkles, Briefcase, User, UploadCloud, FileText,
-    Info, ArrowRight, Clock, Calendar, ChevronRight, CheckCircle, X
+    Info, ArrowRight, Clock, Calendar, ChevronRight, CheckCircle, X, Trash2
 } from 'lucide-react'
 
 const SAMPLE_JD = `Senior Full Stack Engineer at TechCorp
@@ -17,7 +17,7 @@ Requirements:
 - Strong understanding of CI/CD pipelines, Docker, and microservices architecture`
 
 const Home = () => {
-    const { loading, error, generateReport, reports } = useInterview()
+    const { loading, error, generateReport, deleteReport, reports } = useInterview()
     const [jobDescription, setJobDescription] = useState("")
     const [selfDescription, setSelfDescription] = useState("")
     const [selectedFileName, setSelectedFileName] = useState("")
@@ -69,6 +69,14 @@ const Home = () => {
         if (data && data._id) {
             navigate(`/interview/${data._id}`)
         }
+    }
+
+    const handleDeleteReport = async (e, reportId) => {
+        e.stopPropagation()
+        if (!window.confirm("Delete this strategy plan? This action cannot be undone.")) {
+            return
+        }
+        await deleteReport(reportId)
     }
 
     if (loading) {
@@ -255,6 +263,15 @@ const Home = () => {
                                                 <span>{new Date(report.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                                             </p>
                                         </div>
+                                        <button
+                                            type="button"
+                                            className="delete-report-btn"
+                                            aria-label={`Delete ${report.title || 'untitled strategy plan'}`}
+                                            title="Delete strategy plan"
+                                            onClick={(e) => handleDeleteReport(e, report._id)}
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
                                     </div>
 
                                     <div className="card-bottom">

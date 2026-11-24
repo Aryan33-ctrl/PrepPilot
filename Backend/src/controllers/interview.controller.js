@@ -159,57 +159,97 @@ async function getAllInterviewReportsController(req, res) {
             error: process.env.NODE_ENV === "production" ? undefined : err.message
         })
     }
+}
 
-    async function generateFollowUpQuestionsController(req, res) {
-        try {
-            const { interviewId } = req.params
-            if (!mongoose.Types.ObjectId.isValid(interviewId)) {
-                return res.status(400).json({ success: false, message: "Invalid interview ID format." })
-            }
-            const report = await interviewReportModel.findOne({ _id: interviewId, user: req.user.id })
-            if (!report) return res.status(404).json({ success: false, message: "Interview report not found." })
+/**
+ * @description Controller to delete an interview report owned by the logged in user.
+ */
+async function deleteInterviewReportController(req, res) {
+    try {
+        const { interviewId } = req.params
 
-            const questions = await generateFollowUpQuestions({
-                jobDescription: report.jobDescription,
-                evidenceMatches: report.evidenceMatches || [],
-                resume: report.resume,
-                selfDescription: report.selfDescription
-            })
-            report.followUpQuestions = questions.map((question) => ({ ...question, answer: "" }))
-            await report.save()
-            res.status(200).json({ success: true, followUpQuestions: report.followUpQuestions })
-        } catch (err) {
-            console.error("Error generating follow-up questions:", err)
-            res.status(err.code === "GEMINI_INVALID_RESPONSE" ? 502 : 500).json({
+        if (!mongoose.Types.ObjectId.isValid(interviewId)) {
+            return res.status(400).json({
                 success: false,
-                message: err.code === "GEMINI_INVALID_RESPONSE"
-                    ? "The AI service returned invalid follow-up questions. Please try again."
-                    : "Failed to generate follow-up questions."
+                message: "Invalid interview ID format."
             })
         }
-    }
 
-    async function saveFollowUpAnswersController(req, res) {
-        try {
-            const { interviewId } = req.params
-            const { answers } = req.body
-            if (!mongoose.Types.ObjectId.isValid(interviewId) || !Array.isArray(answers)) {
-                return res.status(400).json({ success: false, message: "A valid report ID and answers array are required." })
-            }
-            const report = await interviewReportModel.findOne({ _id: interviewId, user: req.user.id })
-            if (!report) return res.status(404).json({ success: false, message: "Interview report not found." })
-            const answerByQuestion = new Map(answers.map((item) => [item.question, String(item.answer || "").trim()]))
-            report.followUpQuestions = (report.followUpQuestions || []).map((item) => ({
-                question: item.question,
-                intent: item.intent,
-                answer: answerByQuestion.get(item.question) ?? item.answer ?? ""
-            }))
-            await report.save()
-            res.status(200).json({ success: true, followUpQuestions: report.followUpQuestions })
-        } catch (err) {
-            console.error("Error saving follow-up answers:", err)
-            res.status(500).json({ success: false, message: "Failed to save follow-up answers." })
+        const deletedReport = await interviewReportModel.findOneAndDelete({
+            _id: interviewId,
+            user: req.user.id
+        })
+
+        if (!deletedReport) {
+            return res.status(404).json({
+                success: false,
+                message: "Interview report not found."
+            })
         }
+
+        res.status(200).json({
+            success: true,
+            message: "Interview report deleted successfully."
+        })
+    } catch (err) {
+        console.error("Error in deleteInterviewReportController:", err)
+        res.status(500).json({
+            success: false,
+            message: "Failed to delete interview report.",
+            error: process.env.NODE_ENV === "production" ? undefined : err.message
+        })
+    }
+}
+
+async function generateFollowUpQuestionsController(req, res) {
+    try {
+        const { interviewId } = req.params
+        if (!mongoose.Types.ObjectId.isValid(interviewId)) {
+            return res.status(400).json({ success: false, message: "Invalid interview ID format." })
+        }
+        const report = await interviewReportModel.findOne({ _id: interviewId, user: req.user.id })
+        if (!report) return res.status(404).json({ success: false, message: "Interview report not found." })
+
+        const questions = await generateFollowUpQuestions({
+            jobDescription: report.jobDescription,
+            evidenceMatches: report.evidenceMatches || [],
+            resume: report.resume,
+            selfDescription: report.selfDescription
+        })
+        report.followUpQuestions = questions.map((question) => ({ ...question, answer: "" }))
+        await report.save()
+        res.status(200).json({ success: true, followUpQuestions: report.followUpQuestions })
+    } catch (err) {
+        console.error("Error generating follow-up questions:", err)
+        res.status(err.code === "GEMINI_INVALID_RESPONSE" ? 502 : 500).json({
+            success: false,
+            message: err.code === "GEMINI_INVALID_RESPONSE"
+                ? "The AI service returned invalid follow-up questions. Please try again."
+                : "Failed to generate follow-up questions."
+        })
+    }
+}
+
+async function saveFollowUpAnswersController(req, res) {
+    try {
+        const { interviewId } = req.params
+        const { answers } = req.body
+        if (!mongoose.Types.ObjectId.isValid(interviewId) || !Array.isArray(answers)) {
+            return res.status(400).json({ success: false, message: "A valid report ID and answers array are required." })
+        }
+        const report = await interviewReportModel.findOne({ _id: interviewId, user: req.user.id })
+        if (!report) return res.status(404).json({ success: false, message: "Interview report not found." })
+        const answerByQuestion = new Map(answers.map((item) => [item.question, String(item.answer || "").trim()]))
+        report.followUpQuestions = (report.followUpQuestions || []).map((item) => ({
+            question: item.question,
+            intent: item.intent,
+            answer: answerByQuestion.get(item.question) ?? item.answer ?? ""
+        }))
+        await report.save()
+        res.status(200).json({ success: true, followUpQuestions: report.followUpQuestions })
+    } catch (err) {
+        console.error("Error saving follow-up answers:", err)
+        res.status(500).json({ success: false, message: "Failed to save follow-up answers." })
     }
 }
 
@@ -267,4 +307,4 @@ async function generateResumePdfController(req, res) {
     }
 }
 
-module.exports = { generateInterViewReportController, getInterviewReportByIdController, getAllInterviewReportsController, generateFollowUpQuestionsController, saveFollowUpAnswersController, generateResumePdfController }
+module.exports = { generateInterViewReportController, getInterviewReportByIdController, getAllInterviewReportsController, deleteInterviewReportController, generateFollowUpQuestionsController, saveFollowUpAnswersController, generateResumePdfController }

@@ -530,6 +530,28 @@
         }
       }
 
+      .delete-report-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        padding: 0.4rem;
+        border: 1px solid transparent;
+        border-radius: var(--radius-sm);
+        background: transparent;
+        color: var(--text-dim);
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover,
+        &:focus-visible {
+          color: #fb7185;
+          border-color: rgba(244, 63, 94, 0.3);
+          background: rgba(244, 63, 94, 0.12);
+          outline: none;
+        }
+      }
+
       .card-bottom {
         display: flex;
         align-items: center;

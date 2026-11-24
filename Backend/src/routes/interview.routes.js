@@ -40,6 +40,13 @@ interviewRouter.get("/report/:interviewId", authMiddleware.authUser, interviewCo
  */
 interviewRouter.get("/", authMiddleware.authUser, interviewController.getAllInterviewReportsController)
 
+/**
+ * @route DELETE /api/interview/report/:interviewId
+ * @description delete an interview report owned by the logged in user.
+ * @access private
+ */
+interviewRouter.delete("/report/:interviewId", authMiddleware.authUser, interviewController.deleteInterviewReportController)
+
 interviewRouter.post("/report/:interviewId/follow-up-questions", authMiddleware.authUser, interviewController.generateFollowUpQuestionsController)
 interviewRouter.post("/report/:interviewId/follow-up-answers", authMiddleware.authUser, interviewController.saveFollowUpAnswersController)
 

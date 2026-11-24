@@ -3,7 +3,7 @@ const tokenBlacklistModel = require("../models/blacklist.model")
 
 async function authUser(req, res, next) {
 
-    const token = req.cookies.token
+    const token = req.cookies && req.cookies.token
 
     if (!token) {
         return res.status(401).json({
@@ -11,13 +11,20 @@ async function authUser(req, res, next) {
         })
     }
 
-    const isTokenBlacklisted = await tokenBlacklistModel.findOne({
-        token
-    })
+    try {
+        const isTokenBlacklisted = await tokenBlacklistModel.findOne({
+            token
+        })
 
-    if (isTokenBlacklisted) {
-        return res.status(401).json({
-            message: "Token is invalid."
+        if (isTokenBlacklisted) {
+            return res.status(401).json({
+                message: "Token is invalid."
+            })
+        }
+    } catch (err) {
+        console.error("Error checking token blacklist:", err)
+        return res.status(503).json({
+            message: "Authentication service is temporarily unavailable."
         })
     }
 
